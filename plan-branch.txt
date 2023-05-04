@@ -5,3 +5,6 @@
 2. detector : person detector, trash can detector, memory tray detector
 gai semuanya
 hai pak wulan
+
+
+halo, ini contoh penambahkan kata
