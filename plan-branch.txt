@@ -1,0 +1,5 @@
+-master
+-staging
+-dev : 
+1. web-app : 
+2. detector : person detector, trash can detector, memory tray detector
