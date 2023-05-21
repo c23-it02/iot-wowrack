@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 import os
 from sklearn.utils import shuffle
+import tensorflow as tf
 
 def buat_dataset_siamese(path_images, labels, image_path):   
     #membuat list label yang tunggal
@@ -60,3 +61,9 @@ def plot(history, plot_path):
     plt.ylabel("Loss/Accuracy")
     plt.legend(loc="lower left")
     plt.savefig(plot_path)
+    
+def contrastive_loss(y, yhat, margin=1):
+    y = tf.cast(y, yhat.dtype)
+    squared_yhat = K.square(yhat)
+    squared_margin = K.square(K.maximum(margin - yhat, 0))
+    return K.mean((y * squared_yhat) + ((1 - y) * squared_margin))
