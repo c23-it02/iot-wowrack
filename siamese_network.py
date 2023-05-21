@@ -17,9 +17,16 @@ def buat_siamese(input_shape, embedding_dim=128):
     c = Conv2D(16, (3,3), activation='relu')(m)
     m = MaxPooling2D(2,2)(c)
     
-    #fc
+    #fourt convo
     c = Conv2D(64, (3,3), activation='relu')(m)
-    f = Flatten()(c)
+    m = MaxPooling2D(2,2)(c)
+    
+    #fifth convo
+    c = Conv2D(64, (3,3), activation='relu')(m)
+    m = MaxPooling2D(2,2)(c)
+    
+    #fc
+    f = Flatten()(m)
     d = Dense(64, activation='relu')(f)
     output = Dense(embedding_dim)(f)
     return Model(inputs=inp , outputs=output)
