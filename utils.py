@@ -19,22 +19,22 @@ def buat_dataset_siamese(path_images, labels, image_path):
     pair_images = []
     pair_labels = []
     for i, image in enumerate(image_path):
-        image = cv2.imread(os.path.join(path_images, image), cv2.IMREAD_GRAYSCALE)
-        image = cv2.resize(image, (105,105), interpolation=cv2.INTER_AREA)
+        image = cv2.imread(os.path.join(path_images, image), 0)
+        image = cv2.resize(image, (128,128), interpolation=cv2.INTER_AREA)
         image = image/255.
         neg_index = [j for j, label in enumerate(labels) if label != labels[i]]
         post_index = tempat_gambar.get(labels[i])
     
         post_image = image_path[np.random.choice(post_index)]
-        post_image = cv2.imread(os.path.join(path_images, post_image), cv2.IMREAD_GRAYSCALE)
-        post_image = cv2.resize(post_image, (105,105), interpolation=cv2.INTER_AREA)
+        post_image = cv2.imread(os.path.join(path_images, post_image), 0)
+        post_image = cv2.resize(post_image, (128,128), interpolation=cv2.INTER_AREA)
         post_image = post_image/255.
         pair_images.append((image, post_image))
         pair_labels.append(1)
     
         neg_image = image_path[np.random.choice(neg_index)]
-        neg_image = cv2.imread(os.path.join(path_images, neg_image), cv2.IMREAD_GRAYSCALE)
-        neg_image = cv2.resize(neg_image, (105,105), interpolation=cv2.INTER_AREA)
+        neg_image = cv2.imread(os.path.join(path_images, neg_image), 0)
+        neg_image = cv2.resize(neg_image, (128,128), interpolation=cv2.INTER_AREA)
         neg_image = neg_image/255.
         pair_images.append((image, neg_image))
         pair_labels.append(0)
@@ -48,8 +48,7 @@ def buat_dataset_siamese(path_images, labels, image_path):
 
 def distance(vectors):
     (vectorA, vectorB) = vectors
-    sumSquared = K.sum(K.square(vectorA - vectorB), axis=1, keepdims=True)
-    return K.sqrt(K.maximum(sumSquared, K.epsilon()))
+    return tf.math.abs(vectorA - vectorB)
 
 def plot(history, plot_path):
     plt.plot(H.history["loss"], label="train_loss")
@@ -67,3 +66,16 @@ def contrastive_loss(y, yhat, margin=1):
     squared_yhat = K.square(yhat)
     squared_margin = K.square(K.maximum(margin - yhat, 0))
     return K.mean((y * squared_yhat) + ((1 - y) * squared_margin))
+
+def panggil_grafik(image_pairs, n, title='Image Pairs Example'):
+    def show(ax, image):
+        ax.imshow(image)
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
+
+    fig = plt.figure(figsize=(9, 9)) 
+    plt.title(title)
+    axs = fig.subplots(n, 2)
+    for i in range(n):
+        show(axs[i, 0], image_pairs[i][0])
+        show(axs[i, 1], image_pairs[i][1])
